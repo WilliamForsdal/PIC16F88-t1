@@ -1,0 +1,13 @@
+*.c         eol=lf
+*.cpp       eol=lf
+*.hpp       eol=lf
+*.dsl       eol=lf
+*.setdef    eol=lf
+*.memdef    eol=lf
+*.h         eol=lf
+*.txt       eol=lf
+*.s         eol=lf
+*.ld        eol=lf
+*.py        eol=lf
+*.dsg       eol=lf
+*.asm       eol=lf
