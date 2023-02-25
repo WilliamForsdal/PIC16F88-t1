@@ -39,4 +39,16 @@ main:
 main_loop:
     bsf         PORTA, 0
     bcf         PORTA, 0
+    bsf         PORTA, 0
+    bcf         PORTA, 0
+    bsf         PORTA, 0
+    bcf         PORTA, 0
+    bsf         PORTA, 0
+    bcf         PORTA, 0
+    bsf         PORTA, 0
+    bcf         PORTA, 0
+    bsf         PORTA, 0
+    bcf         PORTA, 0
+    bsf         PORTA, 0
+    bcf         PORTA, 0
     goto        main_loop
