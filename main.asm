@@ -26,6 +26,22 @@ reset_vector:
 
 psect code, delta=2
 main:
+    ; call sr_osc_conf
+    ; call sr_gpio_conf
+    ; BANKSEL     OSCCON
+    ; MOVLW       0b01100000
+    ; MOVWF       OSCCON
+    ; BANKSEL     PORTA ; select bank of PORTA
+    ; CLRF        PORTA
+    ; BANKSEL     ANSEL 
+    ; MOVLW       0x00 ; Configure all pins as digital inputs
+    ; MOVWF       ANSEL
+    ; MOVLW       0x01
+    ; MOVWF       TRISA
+
+    ; BANKSEL     PORTA ; select bank of PORTA
+    ; goto        main_loop
+
     BANKSEL     OSCCON
     MOVLW       0b01100000
     MOVWF       OSCCON
@@ -35,26 +51,37 @@ main:
     BANKSEL     ANSEL 
     MOVLW       0x00 ; Configure all pins
     MOVWF       ANSEL ; as digital inputs
-    MOVLW       0x00
+    MOVLW       0x02
     MOVWF       TRISA
     BANKSEL     PORTA ; select bank of PORTA
     goto        main_loop
 
 main_loop:
-    bsf         PORTA, 0
-    bcf         PORTA, 0
-    bsf         PORTA, 0
-    bcf         PORTA, 0
-    bsf         PORTA, 0
-    bcf         PORTA, 0
-    bsf         PORTA, 0
-    bcf         PORTA, 0
-    bsf         PORTA, 0
-    bcf         PORTA, 0
-    bsf         PORTA, 0
-    bcf         PORTA, 0
+    btfsc       PORTA, 1
     bsf         PORTA, 0
     bcf         PORTA, 0
     goto        main_loop
+
+
+
+
+sr_osc_conf:
+    BANKSEL     OSCCON
+    MOVLW       0b01100000
+    MOVWF       OSCCON
+    retlw       0
+
+
+
+sr_gpio_conf:
+    BANKSEL     PORTA ; select bank of PORTA
+    CLRF        PORTA
+    BANKSEL     ANSEL 
+    MOVLW       0x00 ; Configure all pins as digital inputs
+    MOVWF       ANSEL
+    MOVLW       0x01
+    MOVWF       TRISA
+    retlw       0
+
 
 END reset_vector
