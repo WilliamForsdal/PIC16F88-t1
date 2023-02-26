@@ -1,5 +1,6 @@
 
 init:
+    BANKSEL     PORTA ; select bank of PORTA
     call        sr_init_osc
     call        sr_init_gpio
     call        sr_init_uart
@@ -19,7 +20,7 @@ sr_init_gpio:
     CLRF        PORTA
 
     ; Configure all pins as digital inputs
-    BANKSEL     ANSEL 
+    BANKSEL     ANSEL
     MOVLW       0x00
     MOVWF       ANSEL
     MOVLW       0b00000010

@@ -12,6 +12,8 @@ _uart_tx_wait:
     MOVWF       TXREG ; starts tx
     retlw       0
 
+
+
 ; RX uart byte and store in W.
 uart_rx:
     BANKSEL     PIR1
