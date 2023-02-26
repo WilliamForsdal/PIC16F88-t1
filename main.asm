@@ -8,7 +8,15 @@ psect rstVector, delta=2
 reset_vector:
     goto main
 
+
+
+
 psect code, delta=2
+irq_enter:
+    goto irq_handler
+irq_handler:
+    ; handle interrupts
+    retfie
 main:
     call        init
     BANKSEL     PORTA ; select bank of PORTA
@@ -16,32 +24,31 @@ main:
 
 main_loop:
     ; btfsc       PORTA, 1
-    MOVLW       0x41
-    call        uart_tx
-    MOVLW       0x42
-    call        uart_tx
-    MOVLW       0x43
-    call        uart_tx
-    MOVLW       0x44
-    call        uart_tx
-    MOVLW       0x0D
-    call        uart_tx
-    MOVLW       0x0A
+    call        uart_rx
+    MOVWF       0x20
+    incf        0x20, W
     call        uart_tx
     
-    BANKSEL     PORTA
-    MOVLW       200
-    MOVWF       0x21
-_main_loop_delay_1:
-    MOVWF       0x20
-_main_loop_delay_2:
-    DECFSZ      0x20, f
-    goto        _main_loop_delay_2
-    DECFSZ      0x21, f
-    goto        _main_loop_delay_1
-
+    ; BANKSEL     PORTA
+    ; MOVLW       100
+    ; call        delay
     goto        main_loop
 
+
+delay:
+    MOVWF       0x22
+_delay_3:
+    MOVWF       0x21
+_delay_2:
+    MOVWF       0x20
+_delay_1:
+    DECFSZ      0x20, f
+    goto        _delay_1
+    DECFSZ      0x21, f
+    goto        _delay_2
+    DECFSZ      0x22, f
+    goto        _delay_3
+    retlw       0    
 
 #include "init.asm"
 #include "uart.asm"
