@@ -1,16 +1,5 @@
 
 
-; FSR points to data, W contains num bytes
-crc8_fsr:
-    MOVWF       CRC_BYTE_ITER ; store num bytes
-    MOVF        INDF, W       ; Move value in INDF to into W
-    call        crc8
-    INCF        FSR
-    DECFSZ      CRC_BYTE_ITER
-    goto        crc8_fsr
-    MOVF        CRC, W
-    return      ; W contains current CRC
-
 crc8_finalize:
     movlw       0 ; finalize by calculating one last byte, which is 0
 
@@ -39,15 +28,14 @@ _crc8_carry1:
     XORWF       CRC, F
     CLEAR_CARRY
     RLF         CRC_BYTE, F
-
     IF_BIT_SET(STATUS, 0)
-
     BCF         CRC, 0
 
 _crc8_loop_end:
     DECFSZ      CRC_BIT_ITER, F
     goto        _crc8_loop
-    retlw       0 ; retlw to clear W reg after.
+    MOVF        CRC, W
+    return
 
 ;/**
 ; * \file

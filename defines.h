@@ -1,3 +1,7 @@
+// Status bits
+#define CARRY, 0
+#define ZERO, 2
+
 
 #define CLEAR_CARRY BCF STATUS, 0
 
