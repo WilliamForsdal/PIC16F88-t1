@@ -34,10 +34,14 @@ rx_pkt:
 handle_pkt: 
     CLRF        crc8_ACC
 
+_handle_pkt_loop:
     call        uart_rx
     call        crc8
+    SUBLW       0
+    btfss       STATUS, 2
+    goto        _handle_pkt_loop
+    
     call        crc8_finalize
-
     MOVF        crc8_ACC, W
     call        uart_tx
     return ; W holds crc

@@ -2,12 +2,7 @@ processor 16F88
 
 #include <xc.inc>
 #include "config.asm"
-
-#define IF_IS_ZERO   btfss STATUS, 2
-#define IF_NOT_ZERO  btfsc STATUS, 2
-
-#define IF_IS_CARRY btfsc  STATUS, 0
-#define IF_NOT_CARRY btfss STATUS, 0
+#include "defines.h"
 
 ; autogen defines for regs.
 ; #include "regdefs.asm"
