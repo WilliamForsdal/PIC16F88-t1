@@ -27,9 +27,8 @@ rx_pkt:
 ;     retlw       0
 ; _rx_pkt_end_err:
 ;     retlw       1
-    
 
-handle_pkt: 
+handle_pkt:
     CLRF        gr_CRC
 
 _handle_pkt_loop:
@@ -39,6 +38,8 @@ _handle_pkt_loop:
     goto        _handle_pkt_end
 
     MOVF        gr_UART_RX, W
+    BSF         PORTA, 0
+    BCF         PORTA, 0
     call        crc8
     goto        _handle_pkt_loop
     
@@ -47,4 +48,3 @@ _handle_pkt_end:
     MOVF        gr_CRC, W
     call        uart_tx
     return ; W holds crc
-
