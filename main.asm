@@ -3,6 +3,15 @@ processor 16F88
 #include <xc.inc>
 #include "config.asm"
 
+#define IF_IS_ZERO   btfss STATUS, 2
+#define IF_NOT_ZERO  btfsc STATUS, 2
+
+#define IF_IS_CARRY btfsc  STATUS, 0
+#define IF_NOT_CARRY btfss STATUS, 0
+
+; autogen defines for regs.
+; #include "regdefs.asm"
+
 #define W_TEMP          0xFF
 #define STATUS_TEMP     0xFE
 #define PCLATH_TEMP     0xFD
@@ -10,7 +19,6 @@ processor 16F88
 psect rstVector, delta=2
 reset_vector:
     goto main
-
 
 psect code, delta=2
 irq_enter:
@@ -37,22 +45,18 @@ irq_handler:
     retfie
 
 main:
+    ; btfss       TRISB, 2
     call        init
     BANKSEL     PORTA ; select bank of PORTA
-
 
 main_bl:
     goto        main_bl_loop
 main_bl_loop:
-    ; rx packet
-    ; call        rx_pkt
-    ; call        handle_pkt
-
-
-    call        uart_rx
-    MOVWF       0x20
-    incf        0x20, W
-    call        uart_tx
+    call        handle_pkt
+    ; call        uart_rx
+    ; MOVWF       0x20
+    ; incf        0x20, W
+    ; call        uart_tx
     goto        main_bl_loop
 
 
@@ -74,5 +78,7 @@ _delay_1:
 
 #include "init.asm"
 #include "uart.asm"
+#include "crc8.asm"
+#include "bootloader.asm"
 
 END reset_vector
