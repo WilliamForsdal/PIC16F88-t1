@@ -1,11 +1,20 @@
-funcs:
-  - crc8:
-        global_regs: # F0h-FFh
-          - CRC # Stores crc working value
-          - BYTE # current byte being calculated
+regs:
+    global_regs: # F0h-FFh
+      - CRC # Stores crc working value
+      - CRC_BYTE # current byte being calculated
+      - CRC_ITER # iterator
 
-  - irq_handler:
-        global_regs:
-          - W_TEMP
-          - PCLATH_TEMP
-          - STATUS_TEMP
+      # interrupt temp vars
+      - W_TEMP
+      - PCLATH_TEMP
+      - STATUS_TEMP
+      - UART_RX # save last UART rx byte here.
+
+    bank0:
+        # bank0 regs, from 0x20 to 0x6F
+    bank1:
+        # bank1 regs, from 0xA0 to 0xEF
+    bank2:
+        # bank2 regs, from 0x110 to 0x16F
+    bank3:
+        # bank3 regs, from 0x190 to 0x1EF

@@ -1,6 +1,4 @@
-#define BUF_START   0x20
 
-#define REG_BYTES_LEFT  0xFC
 rx_pkt:
     call uart_rx
     return
@@ -20,7 +18,7 @@ rx_pkt:
 ;     call        uart_rx
 ;     MOVWF       BUF_START+1
 ;     MOVF        REG_BYTES_LEFT, f
-;     IF_ZERO
+;     IF_IS_ZERO
 ;     goto        _rx_pkt_preambles
 ; _rx_pkt_data:
 
@@ -32,17 +30,21 @@ rx_pkt:
     
 
 handle_pkt: 
-    CLRF        crc8_ACC
+    CLRF        gr_CRC
 
 _handle_pkt_loop:
     call        uart_rx
+    MOVF        gr_UART_RX, F
+    IF_IS_ZERO
+    goto        _handle_pkt_end
+
+    MOVF        gr_UART_RX, W
     call        crc8
-    SUBLW       0
-    btfss       STATUS, 2
     goto        _handle_pkt_loop
     
+_handle_pkt_end:
     call        crc8_finalize
-    MOVF        crc8_ACC, W
+    MOVF        gr_CRC, W
     call        uart_tx
     return ; W holds crc
 

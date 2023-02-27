@@ -21,4 +21,5 @@ _uart_rx_wait:
     btfss       PIR1, 5
     goto        _uart_rx_wait
     MOVF        RCREG, W
-    RETURN ; w has value
+    MOVWF       gr_UART_RX
+    RETURN ; gr_UART_RX and W has value
