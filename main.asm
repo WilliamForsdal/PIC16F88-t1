@@ -36,20 +36,15 @@ irq_handler:
     retfie
 
 main:
-    ; btfss       TRISB, 2
     call        init
     BANKSEL     PORTA ; select bank of PORTA
 
 main_bl:
     goto        main_bl_loop
+
 main_bl_loop:
     call        handle_pkt
-    ; call        uart_rx
-    ; MOVWF       0x20
-    ; incf        0x20, W
-    ; call        uart_tx
     goto        main_bl_loop
-
 
 ; Delay proportional to W * W * W
 delay:

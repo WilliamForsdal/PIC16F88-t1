@@ -36,10 +36,12 @@ _crc8_carry0:
     goto        _crc8_loop_end
     
 _crc8_carry1:
-    CLEAR_CARRY
     XORWF       CRC, F
+    CLEAR_CARRY
     RLF         CRC_BYTE, F
-    IF_IS_CARRY
+
+    IF_BIT_SET(STATUS, 0)
+
     BCF         CRC, 0
 
 _crc8_loop_end:

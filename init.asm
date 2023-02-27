@@ -26,7 +26,6 @@ sr_init_gpio:
     retlw       0
 
 sr_init_uart:
-    
     ; Init SPBRG with baudrate
     BANKSEL     SPBRG
     MOVLW       0b10000000

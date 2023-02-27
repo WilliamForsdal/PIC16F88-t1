@@ -7,3 +7,7 @@
 
 #define IF_IS_CARRY btfsc STATUS, 0
 #define IF_NOT_CARRY btfss STATUS, 0
+
+
+#define IF_BIT_SET(R, B)    btfsc   R,B
+#define IF_BIT_CLR(regg, bitt)    btfss   regg,bitt
