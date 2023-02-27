@@ -2,46 +2,50 @@
 
 ; FSR points to data, W contains num bytes
 crc8_fsr:
-
-
-
-
+    MOVWF       CRC_BYTE_ITER ; store num bytes
+    MOVF        INDF, W       ; Move value in INDF to into W
+    call        crc8
+    INCF        FSR
+    DECFSZ      CRC_BYTE_ITER
+    goto        crc8_fsr
+    MOVF        CRC, W
+    return      ; W contains current CRC
 
 crc8_finalize:
     movlw       0 ; finalize by calculating one last byte, which is 0
+
+; Calculate CRC8 
 crc8:
     BANKSEL     PORTA
     ; W holds the byte to calc, REG_ACC holds the current val
-    MOVWF       gr_CRC_BYTE ; store the byte
+    MOVWF       CRC_BYTE ; store the byte
     movlw       8
-    MOVWF       gr_CRC_ITER ; loop counter: 8,7,6,5,4,3,2,1.
-    
+    MOVWF       CRC_BIT_ITER ; loop counter: 8,7,6,5,4,3,2,1.
     movlw       7 ; 0b111
 
 _crc8_loop:
     CLEAR_CARRY ; Clear carry flag before RLF
-    RLF         gr_CRC, F
+    RLF         CRC, F
     IF_IS_CARRY
     goto        _crc8_carry1
     
 _crc8_carry0:
-    RLF         gr_CRC_BYTE, F
+    RLF         CRC_BYTE, F
     IF_IS_CARRY
-    BSF         gr_CRC, 0
+    BSF         CRC, 0
     goto        _crc8_loop_end
     
 _crc8_carry1:
     CLEAR_CARRY
-    XORWF       gr_CRC, F
-    RLF         gr_CRC_BYTE, F
+    XORWF       CRC, F
+    RLF         CRC_BYTE, F
     IF_IS_CARRY
-    BCF         gr_CRC, 0
+    BCF         CRC, 0
 
 _crc8_loop_end:
-    DECFSZ      gr_CRC_ITER, F
+    DECFSZ      CRC_BIT_ITER, F
     goto        _crc8_loop
     retlw       0 ; retlw to clear W reg after.
-
 
 ;/**
 ; * \file

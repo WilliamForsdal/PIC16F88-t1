@@ -1,24 +1,22 @@
 
 init:
     BANKSEL     PORTA ; select bank of PORTA
-    call        sgr_init_osc
-    call        sgr_init_gpio
-    call        sgr_init_uart
+    call        sr_init_osc
+    call        sr_init_gpio
+    call        sr_init_uart
     retlw       0
 
-sgr_init_osc:
+sr_init_osc:
     ; Init osc 8MHz
     BANKSEL     OSCCON
     MOVLW       0b01110000
     MOVWF       OSCCON
     retlw       0
 
-sgr_init_gpio:
-    
+sr_init_gpio:
     ; Clear outputs
     BANKSEL     PORTA
     CLRF        PORTA
-
     ; Configure all pins as digital inputs
     BANKSEL     ANSEL
     MOVLW       0x00
@@ -27,8 +25,7 @@ sgr_init_gpio:
     MOVWF       TRISA
     retlw       0
 
-
-sgr_init_uart:
+sr_init_uart:
     
     ; Init SPBRG with baudrate
     BANKSEL     SPBRG
