@@ -19,3 +19,13 @@
 
 #define TP_ON()         BSF     PORTA, 0
 #define TP_OFF()         BCF     PORTA, 0
+
+
+
+
+
+#define CMD_PING         0x01
+
+#define CMD_READ_PORTA   0x20
+#define CMD_READ_PORTB   0x21
+#define CMD_UNKNOWN      0xFF

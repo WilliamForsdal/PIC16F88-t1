@@ -4,6 +4,7 @@ init:
     call        sr_init_osc
     call        sr_init_gpio
     call        sr_init_uart
+    BANKSEL     PORTA
     retlw       0
 
 sr_init_osc:

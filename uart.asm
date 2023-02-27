@@ -1,4 +1,5 @@
 
+
 ; Transmit what's in the W reg, return when complete.
 uart_tx:
     BANKSEL     TXSTA
@@ -9,7 +10,7 @@ _uart_tx_wait:
     ; Start tx
     BANKSEL     TXREG
     MOVWF       TXREG ; starts tx
-    retlw       0
+    RETURN      
 
 ; RX uart byte and store in W.
 uart_rx:

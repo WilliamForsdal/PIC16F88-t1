@@ -44,6 +44,24 @@ main_bl:
 
 main_bl_loop:
     call        rx_pkt
+    IF_BIT_SET  STATUS, ZERO
+    call        handle_pkt
+
+    ; movlw       0x20
+    ; MOVWF       FSR
+    ; MOVF        INDF, W
+    ; INCF        FSR, F
+    ; call        uart_tx
+    ; MOVF        INDF, W
+    ; INCF        FSR, F
+    ; call        uart_tx
+    ; MOVF        INDF, W
+    ; INCF        FSR, F
+    ; call        uart_tx
+    ; MOVF        INDF, W
+    ; INCF        FSR, F
+    ; call        uart_tx
+
     goto        main_bl_loop
 
 ; Delay proportional to W * W * W
