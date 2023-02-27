@@ -1,0 +1,17 @@
+Preambles: 0xFF
+
+
+0xFF 0xFF 0xFF 0xFF
+0x10: data length including CRC, not including this byte.
+0x01: cmd
+...
+...optional data...
+...
+0xAB: 8bit CRC:
+
+pycrc --model crc-8 --algorithm bbb --generate c -o crc.c
+
+
+Commands:
+
+0x01. ping

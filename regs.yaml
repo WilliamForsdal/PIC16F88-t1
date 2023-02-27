@@ -1,0 +1,11 @@
+funcs:
+  - crc8:
+        global_regs: # F0h-FFh
+          - CRC # Stores crc working value
+          - BYTE # current byte being calculated
+
+  - irq_handler:
+        global_regs:
+          - W_TEMP
+          - PCLATH_TEMP
+          - STATUS_TEMP
