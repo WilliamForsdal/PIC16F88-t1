@@ -28,14 +28,14 @@ _crc8_carry1:
     XORWF       CRC, F
     CLEAR_CARRY
     RLF         CRC_BYTE, F
-    IF_BIT_SET(STATUS, 0)
+    IF_BIT_SET  STATUS, CARRY
     BCF         CRC, 0
 
 _crc8_loop_end:
     DECFSZ      CRC_BIT_ITER, F
     goto        _crc8_loop
     MOVF        CRC, W
-    return
+    return      ; CRC is in W
 
 ;/**
 ; * \file

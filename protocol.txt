@@ -2,8 +2,8 @@ Preambles: 0xFF
 
 
 0xFF 0xFF 0xFF 0xFF
-0x10: data length including CRC, not including this byte.
 0x01: cmd
+0x10: data length excluding CRC, not including this byte, ie 0 for all pkts without data.
 ...
 ...optional data...
 ...

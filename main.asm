@@ -43,24 +43,24 @@ main_bl:
     goto        main_bl_loop
 
 main_bl_loop:
-    call        handle_pkt
+    call        rx_pkt
     goto        main_bl_loop
 
 ; Delay proportional to W * W * W
-delay:
-    MOVWF       0x22
-_delay_3:
-    MOVWF       0x21
-_delay_2:
-    MOVWF       0x20
-_delay_1:
-    DECFSZ      0x20, f
-    goto        _delay_1
-    DECFSZ      0x21, f
-    goto        _delay_2
-    DECFSZ      0x22, f
-    goto        _delay_3
-    retlw       0    
+; delay:
+;     MOVWF       0x22
+; _delay_3:
+;     MOVWF       0x21
+; _delay_2:
+;     MOVWF       0x20
+; _delay_1:
+;     DECFSZ      0x20, f
+;     goto        _delay_1
+;     DECFSZ      0x21, f
+;     goto        _delay_2
+;     DECFSZ      0x22, f
+;     goto        _delay_3
+;     retlw       0    
 
 #include "init.asm"
 #include "uart.asm"

@@ -17,6 +17,9 @@ regs:
       - CRC_BIT_ITER # iterator
       - CRC_BYTE_ITER # iterator
 
+      # packet handler byte counter
+      - PKT_BYTE_ITER
+
       # interrupt temp vars
       - W_TEMP
       - PCLATH_TEMP
