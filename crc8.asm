@@ -5,6 +5,7 @@ crc8_finalize:
 
 ; Calculate CRC8 
 crc8:
+    MOVWF       CRC_W_TEMP
     BANKSEL     PORTA
     ; W holds the byte to calc, REG_ACC holds the current val
     MOVWF       CRC_BYTE ; store the byte
@@ -34,8 +35,8 @@ _crc8_carry1:
 _crc8_loop_end:
     DECFSZ      CRC_BIT_ITER, F
     goto        _crc8_loop
-    MOVF        CRC, W
-    return      ; CRC is in W
+    MOVF        CRC_W_TEMP, W
+    return      
 
 ;/**
 ; * \file

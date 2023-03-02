@@ -22,6 +22,7 @@ sr_init_gpio:
     BANKSEL     ANSEL
     MOVLW       0x00
     MOVWF       ANSEL
+    BANKSEL     TRISA
     MOVLW       0b00000010
     MOVWF       TRISA
     retlw       0

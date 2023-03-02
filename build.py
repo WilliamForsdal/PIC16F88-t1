@@ -12,10 +12,13 @@ except ImportError:
 yaml_config = """
 regs:
     global_regs: # F0h-FFh
-      - CRC # Stores crc working value
-      - CRC_BYTE # current byte being calculated
-      - CRC_BIT_ITER # iterator
-      - CRC_BYTE_ITER # iterator
+    #   - CRC # Stores crc working value
+    #   - CRC_BYTE # current byte being calculated
+    #   - CRC_BIT_ITER # iterator
+    #   - CRC_W_TEMP # Save W and restore it after crc?
+
+      - FCS_1
+      - FCS_2
 
       # packet handler byte counter
       - PKT_BYTE_ITER

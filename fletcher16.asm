@@ -1,3 +1,1 @@
 ; :)
-
-#define FLETCHER16_UPDATE(DATA_REG_ADDR)

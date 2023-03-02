@@ -21,11 +21,22 @@
 #define TP_OFF()         BCF     PORTA, 0
 
 
+#define FLETCHER16_INIT()     CLRF        FCS_1 \
+                              CLRF        FCS_2
+
+
+#define PKT_MAX_LEN 0x4F //(0x70-0x20-1)
+
+
+#define CMD_PING            0x01
+
+
+#define CMD_WRITE_EEPROM    0x02
+#define CMD_READ_EEPROM    0x03
 
 
 
-#define CMD_PING         0x01
+#define CMD_READ_GPIO       0x20
+#define CMD_UNKNOWN         0xFF
 
-#define CMD_READ_PORTA   0x20
-#define CMD_READ_PORTB   0x21
-#define CMD_UNKNOWN      0xFF
+

@@ -6,6 +6,7 @@ processor 16F88
 
 ; autogen defines for regs.
 #include "regdefs.h"
+#include "macros.asm"
 
 psect rstVector, delta=2
 reset_vector:
@@ -35,34 +36,39 @@ irq_handler:
     ; handle interrupts
     retfie
 
+
 main:
     call        init
     BANKSEL     PORTA ; select bank of PORTA
+    fcs16_init
+
+; main_testloop:
+;     call        uart_rx
+;     fcs16_update
+;     MOVF        FCS_1, W
+;     call        uart_tx
+;     MOVF        FCS_2, W
+;     call        uart_tx
+
+;     goto        main_testloop
 
 main_bl:
     goto        main_bl_loop
 
 main_bl_loop:
     call        rx_pkt
-    IF_BIT_SET  STATUS, ZERO
+    IF_NOT_ZERO
+    goto        bad_pkt
     call        handle_pkt
+    goto        main_bl_loop
 
-    ; movlw       0x20
-    ; MOVWF       FSR
-    ; MOVF        INDF, W
-    ; INCF        FSR, F
-    ; call        uart_tx
-    ; MOVF        INDF, W
-    ; INCF        FSR, F
-    ; call        uart_tx
-    ; MOVF        INDF, W
-    ; INCF        FSR, F
-    ; call        uart_tx
-    ; MOVF        INDF, W
-    ; INCF        FSR, F
-    ; call        uart_tx
+bad_pkt:
+    call        uart_tx
+    movlw       0xff
+    call        uart_tx
 
     goto        main_bl_loop
+
 
 ; Delay proportional to W * W * W
 ; delay:
@@ -82,7 +88,7 @@ main_bl_loop:
 
 #include "init.asm"
 #include "uart.asm"
-#include "crc8.asm"
+; #include "crc8.asm"
 #include "bootloader.asm"
 
 END reset_vector

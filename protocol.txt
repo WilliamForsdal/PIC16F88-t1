@@ -2,11 +2,20 @@ Preambles: 0xFF
 
 
 0xFF 0xFF 0xFF 0xFF
-0xNN: data length including CRC, not including this byte, ie 2 for all pkts without data.
+0xNN: data length, including cmd, not counting this byte and CRC, ie 1 for all pkts without data.
 0x01: cmd
 ...
 ...optional data...
 ...
+fletcher16_1
+fletcher16_2
+
+
+
+_______________________
+OLD CRC:
+
+
 0xAB: 8bit CRC:
 
 pycrc --model crc-8 --algorithm bbb --generate c -o crc.c
