@@ -90,5 +90,6 @@ bad_pkt:
 #include "uart.asm"
 ; #include "crc8.asm"
 #include "bootloader.asm"
+#include "eeprom.asm"
 
 END reset_vector

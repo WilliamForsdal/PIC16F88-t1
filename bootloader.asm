@@ -18,7 +18,6 @@ _rx_pkt_consume_preambles:
     IF_ZERO
     goto        _rx_pkt_consume_preambles
 
-    dbg_blip
     ; Got first byte here (length). Now calc crc and rx next bytes.
     XORLW       0xFF        ; Xor W with FF again to get the original byte back
     MOVWF       INDF        ; Save it in buffer,
@@ -50,7 +49,6 @@ _rx_pkt_end:
     SUBWF       FCS_1, F
     IF_BIT_CLR STATUS, ZERO
     return      ; BAD CHECKSUM, w != 0 here.
-    dbg_blip
     call        uart_rx
     SUBWF       FCS_2, F
     return ; Caller can check if zero after return
@@ -77,6 +75,12 @@ handle_pkt:
     XORLW       CMD_READ_GPIO
     IF_BIT_SET  STATUS, ZERO
     goto        _handle_pkt_read_port
+
+    ; CMD_READ_EEPROM
+    MOVF        0x21, W             ; W is changed by XORLW above, so have to set it again.
+    XORLW       CMD_READ_EEPROM
+    IF_BIT_SET  STATUS, ZERO
+    goto        _handle_pkt_read_eeprom
 
     ; Repeat for other CMD handlers..
 
@@ -137,10 +141,64 @@ _handle_pkt_read_port:
 ; CMD_WRITE_EEPROM
 ; ----------------------------
 _handle_pkt_write_eeprom:
+    ; 0x20 = len    
+    ; 0x21 = cmd
+    ; 0x22 = EEADR start address
+    ; 0x23... EEDATA
+
+    ; Store length - 1 in W. This is how many bytes to write.
+    DECF        0x20, W
+    
+    
+
     return
 
 ; ----------------------------
 ; CMD_READ_EEPROM
 ; ----------------------------
 _handle_pkt_read_eeprom:
+    ; 0x20 = len    
+    ; 0x21 = cmd
+    ; 0x22 = EEADR
+    ; 0x23 = len to read
+
+    ; Send length
+    MOVF        0x23, W
+    MOVWF       PKT_BYTE_ITER
+    ADDLW       1 ; add 1 for cmd byte
+    call        uart_tx
+    fcs16_update
+
+    ; send CMD
+    MOVLW       CMD_READ_EEPROM
+    call        uart_tx
+    fcs16_update
+    
+    ; check if len == 0
+    MOVF        PKT_BYTE_ITER, F
+    IF_BIT_SET  STATUS, ZERO
+    goto        _handle_pkt_read_eeprom_end
+
+    ; Load EEPROM address in EEADR
+    MOVF            0x22, W
+    BANKSEL         EEADR
+    MOVWF           EEADR
+    BANKSEL         EECON1
+    BCF             EECON1, 7  ; Point to Data memory
+
+    ; now start sending EEPROM data
+_handle_pkt_read_eeprom_loop:
+        BANKSEL     EECON1
+        BSF         EECON1, 0  ; EE Read
+        BANKSEL     EEDATA ; Select Bank of EEDATA
+        MOVF        EEDATA, W ; W = EEDATA
+        call        uart_tx
+        fcs16_update
+        BANKSEL     EEADR ; uart_tx changes bank
+        INCF        EEADR, F
+        DECFSZ      PKT_BYTE_ITER, F
+        goto        _handle_pkt_read_eeprom_loop
+
+_handle_pkt_read_eeprom_end:
+    fcs16_finalize_and_tx
     return
