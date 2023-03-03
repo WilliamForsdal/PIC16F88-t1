@@ -22,10 +22,6 @@ _eeprom_write_wait:
     ; After a write sequence has been initiated, clearing the WREN bit will not affect this write cycle.
     BCF         EECON1, 2
     
-_eeprom_write_wait2:
-    BTFSC       EECON1, 1 ; Wait for write to complete
-    GOTO        _eeprom_write_wait2
-
     BANKSEL     PORTA
     return      ; all done!
 
