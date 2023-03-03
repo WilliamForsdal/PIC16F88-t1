@@ -33,3 +33,16 @@ dbg_blip MACRO
     TP_ON()
     TP_OFF()
     ENDM
+
+
+
+send_empty_reply MACRO le_cmd
+    BANKSEL         PORTA
+    movlw           1
+    call            uart_tx
+    fcs16_update
+    movlw           le_cmd
+    call            uart_tx
+    fcs16_update
+    fcs16_finalize_and_tx
+    ENDM

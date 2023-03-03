@@ -42,15 +42,8 @@ main:
     BANKSEL     PORTA ; select bank of PORTA
     fcs16_init
 
-; main_testloop:
-;     call        uart_rx
-;     fcs16_update
-;     MOVF        FCS_1, W
-;     call        uart_tx
-;     MOVF        FCS_2, W
-;     call        uart_tx
-
-;     goto        main_testloop
+    ; call        test_write_eeprom
+    call        ee_print_all
 
 main_bl:
     goto        main_bl_loop
@@ -68,6 +61,31 @@ bad_pkt:
     call        uart_tx
 
     goto        main_bl_loop
+
+ee_print_all:
+
+    BANKSEL     EEADR ; Select Bank of EEADR
+    CLRF        EEADR ; check 0
+
+_ee_print_all_loop:
+    call        eeprom_read
+    call        uart_tx
+    BANKSEL     EEADR ; Select Bank of EEADR
+    INCF        EEADR, F
+    IF_NOT_ZERO
+    goto        _ee_print_all_loop
+    BANKSEL     PORTA
+    return
+
+; test_write_eeprom:
+;     BANKSEL     EEADR ; Select Bank of EEADR
+;     CLRF        EEADR ; check 0
+;     call        eeprom_read
+;     call        uart_tx
+;     ; Write W + 1 back to 0
+;     ADDLW       1
+;     call        eeprom_write
+;     return
 
 
 ; Delay proportional to W * W * W

@@ -30,9 +30,8 @@
 
 #define CMD_PING            0x01
 
-
-#define CMD_WRITE_EEPROM    0x02
-#define CMD_READ_EEPROM     0x03
+#define CMD_WRITE_EEPROM    0x11
+#define CMD_READ_EEPROM     0x12
 
 
 

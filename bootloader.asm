@@ -76,8 +76,14 @@ handle_pkt:
     IF_BIT_SET  STATUS, ZERO
     goto        _handle_pkt_read_port
 
+    ; CMD_WRITE_EEPROM
+    MOVF        0x21, W
+    XORLW       CMD_WRITE_EEPROM
+    IF_BIT_SET  STATUS, ZERO
+    goto        _handle_pkt_write_eeprom
+
     ; CMD_READ_EEPROM
-    MOVF        0x21, W             ; W is changed by XORLW above, so have to set it again.
+    MOVF        0x21, W 
     XORLW       CMD_READ_EEPROM
     IF_BIT_SET  STATUS, ZERO
     goto        _handle_pkt_read_eeprom
@@ -146,11 +152,48 @@ _handle_pkt_write_eeprom:
     ; 0x22 = EEADR start address
     ; 0x23... EEDATA
 
-    ; Store length - 1 in W. This is how many bytes to write.
-    DECF        0x20, W
-    
-    
+    ; if len < 3, we don't have any data.
+    movlw       2
+    SUBWF       0x20, W
+    IF_NOT_CARRY
+    goto        _handle_pkt_write_eeprom_end
 
+    ; Store length - 2 in PKT_BYTE_ITER. This is how many bytes to write.
+    MOVLW       2
+    SUBWF        0x20, W
+    MOVWF       PKT_BYTE_ITER
+
+    MOVF        0x22, W
+    BANKSEL     EEADR
+    MOVWF       EEADR
+
+    ; Point FSR to data to write, ie skip len and cmd
+    MOVLW       0x23
+    MOVWF       FSR
+
+_handle_pkt_write_eeprom_loop:
+        BANKSEL     PORTA
+        TP_ON()
+        MOVF        INDF, W
+        call        eeprom_write
+        BANKSEL     PORTA
+        TP_OFF()
+
+        BANKSEL     EECON1
+_handle_pkt_write_eeprom_loop_wait_for_write_finish:
+        BTFSC       EECON1, 1 ; Wait for write to complete
+        GOTO        _handle_pkt_write_eeprom_loop_wait_for_write_finish
+        INCF        FSR, f
+        BANKSEL     EEADR
+        INCF        EEADR, F
+
+        BANKSEL     PKT_BYTE_ITER
+        DECFSZ      PKT_BYTE_ITER, f
+        GOTO        _handle_pkt_write_eeprom_loop
+
+_handle_pkt_write_eeprom_end:
+    ; Now tx reply
+    send_empty_reply    CMD_WRITE_EEPROM
     return
 
 ; ----------------------------
@@ -161,10 +204,12 @@ _handle_pkt_read_eeprom:
     ; 0x21 = cmd
     ; 0x22 = EEADR
     ; 0x23 = len to read
+    ; If 0x23 == 0, we will tx all 256 bytes.
 
     ; Send length
     MOVF        0x23, W
     MOVWF       PKT_BYTE_ITER
+
     ADDLW       1 ; add 1 for cmd byte
     call        uart_tx
     fcs16_update
@@ -173,11 +218,6 @@ _handle_pkt_read_eeprom:
     MOVLW       CMD_READ_EEPROM
     call        uart_tx
     fcs16_update
-    
-    ; check if len == 0
-    MOVF        PKT_BYTE_ITER, F
-    IF_BIT_SET  STATUS, ZERO
-    goto        _handle_pkt_read_eeprom_end
 
     ; Load EEPROM address in EEADR
     MOVF            0x22, W
