@@ -74,7 +74,7 @@ handle_pkt:
     MOVF        0x21, W             ; W is changed by XORLW above, so have to set it again.
     XORLW       CMD_READ_GPIO
     IF_BIT_SET  STATUS, ZERO
-    goto        _handle_pkt_read_port
+    goto        _handle_pkt_read_gpio
 
     ; CMD_WRITE_EEPROM
     MOVF        0x21, W
@@ -125,9 +125,9 @@ _handle_pkt_ping_loop:
 ; ----------------------------
 ; CMD_READ_GPIO
 ; ----------------------------
-_handle_pkt_read_port:
+_handle_pkt_read_gpio:
     BANKSEL     PORTA
-    MOVLW       4 ; send LEN
+    MOVLW       3 ; send LEN
     call        uart_tx
     fcs16_update
     ; tx CMD
